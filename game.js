@@ -1,5 +1,5 @@
-import {MusicPlayer} from './audio.js?v=audio-6';
-import {WINDOW, judge, nearest, multiplier, makeChart, VICTORY_RATE, hasWon} from './rhythm.js?v=lead-5';
+import {MusicPlayer, downloadAsset} from './audio.js?v=ready-7';
+import {WINDOW, judge, nearest, multiplier, preparedChart, VICTORY_RATE, hasWon} from './rhythm.js?v=ready-7';
 const $ = id => document.getElementById(id), root = $('game'), canvas = $('highway'), pen = canvas.getContext('2d'), pads = [...document.querySelectorAll('.pad')];
 const NOTE_TRAVEL = 1.8;
 const audioElement=document.createElement('audio');audioElement.hidden=true;document.body.append(audioElement);
@@ -9,7 +9,7 @@ const TRACK = 'Music/Anna_Asti_-_Po_baram.mp3';
 const laneColors=['#aab7b8','#d28c60','#b4a078'];
 const laneIcons=['01 Shield.png','02 Flame.png','03 Sword.png'].map(name=>{const img=new Image();img.src=`assets/${name}`;return img});
 let chartBeat=1,chartPhase=0;
-let buffer, duration = 90, state = 'idle', notes = [], training = false, offset = 0;
+let chartData, musicReady=false, duration = 90, state = 'idle', notes = [], training = false, offset = 0;
 let hp=100, boss=100, score=0, combo=0, maxCombo=0, hitCount=0, perfectCount=0, feedbackUntil=0;
 let width=400, height=350, lastUI=0, phaseTwo=false, countText='', loadTask, holdGrace=0;
 const held = new Map(), activeInputs = new Map(), flashes=[0,0,0], particles=[], hitEffects=[];
@@ -26,15 +26,26 @@ function audioTime(){return music.currentTime}
 function gameTime(){return audioTime()-offset}
 function fmt(t){t=Math.max(0,Math.floor(t));return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
 async function load(){
-  if(buffer)return;
-  loadTask ||= (async()=>{
-    const response=await fetch(TRACK);if(!response.ok)throw new Error('Трек не найден в папке Music');
-    const bytes=await response.arrayBuffer();
-    const Decoder=window.OfflineAudioContext||window.webkitOfflineAudioContext;
-    const decoder=new Decoder(1,1,44100);
-    buffer=await decoder.decodeAudioData(bytes.slice(0));
-    music.setSource(URL.createObjectURL(new Blob([bytes],{type:'audio/mpeg'})));
-  })();
+  if(musicReady&&chartData)return;
+  if(!loadTask){
+    const controller=new AbortController();
+    loadTask=(async()=>{
+      try{
+        const aac=!!audioElement.canPlayType('audio/mp4; codecs="mp4a.40.2"');
+        const [mapBytes,musicBytes]=await Promise.all([
+          downloadAsset('charts.json?v=ready-7',{signal:controller.signal,timeoutMs:20000}),
+          downloadAsset(aac?'Music/anna-playback.m4a':TRACK,{signal:controller.signal,onProgress:(received,total)=>{
+            const mb=(received/1048576).toFixed(1);
+            $('status').textContent=total?`Загрузка музыки: ${Math.min(100,Math.round(received/total*100))}% · ${mb} МБ`:`Загрузка музыки: ${mb} МБ`;
+          }})
+        ]);
+        const map=JSON.parse(new TextDecoder().decode(mapBytes));
+        if(!map.modes||!map.duration)throw new Error('Повреждена карта трека');
+        music.setSource(URL.createObjectURL(new Blob([musicBytes],{type:aac?'audio/mp4':'audio/mpeg'})));
+        chartData=map;musicReady=true;
+      }catch(e){controller.abort();throw e}
+    })();
+  }
   try{await loadTask}catch(e){loadTask=null;throw e}
 }
 function stopSource(){music.stop()}
@@ -46,10 +57,10 @@ async function start(){
   $('start').disabled=true;
   try{
     if(!pendingChart||preparedKey!==key){
-      $('status').textContent='Загружаем трек и готовим ноты…';
+      $('status').textContent='Загружаем готовую карту и музыку…';
       await load();
-      duration=$('length').value==='full'?buffer.duration:Math.min(90,buffer.duration);
-      pendingChart=makeChart(buffer,duration,$('chart-mode').value);
+      duration=$('length').value==='full'?chartData.duration:Math.min(90,chartData.duration);
+      pendingChart=preparedChart(chartData,duration,$('chart-mode').value);
       if(!pendingChart.notes.length)throw new Error('Не удалось построить карту нот');
       preparedKey=key;
       $('start').innerHTML='Вступить в бой со звуком <span>↗</span>';
