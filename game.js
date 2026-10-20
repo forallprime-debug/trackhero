@@ -1,11 +1,15 @@
+import {MusicPlayer} from './audio.js?v=audio-6';
 import {WINDOW, judge, nearest, multiplier, makeChart, VICTORY_RATE, hasWon} from './rhythm.js?v=lead-5';
 const $ = id => document.getElementById(id), root = $('game'), canvas = $('highway'), pen = canvas.getContext('2d'), pads = [...document.querySelectorAll('.pad')];
 const NOTE_TRAVEL = 1.8;
+const audioElement=document.createElement('audio');audioElement.hidden=true;document.body.append(audioElement);
+const music=new MusicPlayer(audioElement);
+let pendingChart=null,preparedKey='';
 const TRACK = 'Music/Anna_Asti_-_Po_baram.mp3';
 const laneColors=['#aab7b8','#d28c60','#b4a078'];
 const laneIcons=['01 Shield.png','02 Flame.png','03 Sword.png'].map(name=>{const img=new Image();img.src=`assets/${name}`;return img});
 let chartBeat=1,chartPhase=0;
-let context, buffer, source, startedAt = 0, duration = 90, state = 'idle', notes = [], training = false, offset = 0;
+let buffer, duration = 90, state = 'idle', notes = [], training = false, offset = 0;
 let hp=100, boss=100, score=0, combo=0, maxCombo=0, hitCount=0, perfectCount=0, feedbackUntil=0;
 let width=400, height=350, lastUI=0, phaseTwo=false, countText='', loadTask, holdGrace=0;
 const held = new Map(), activeInputs = new Map(), flashes=[0,0,0], particles=[], hitEffects=[];
@@ -18,33 +22,54 @@ function setupTelegram(){ const tg=window.Telegram?.WebApp;if(!tg?.initData)retu
 setupTelegram();
 function resize(){const r=canvas.getBoundingClientRect();width=r.width;height=r.height;const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);pen.setTransform(d,0,0,d,0,0)}
 new ResizeObserver(resize).observe(canvas);
-function audioTime(){return context ? context.currentTime-startedAt : 0}
+function audioTime(){return music.currentTime}
 function gameTime(){return audioTime()-offset}
 function fmt(t){t=Math.max(0,Math.floor(t));return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
 async function load(){
-  if(!context){context=new (window.AudioContext||window.webkitAudioContext)();context.addEventListener('statechange',()=>{if(context.state==='interrupted')pause()})}
-  await context.resume();
   if(buffer)return;
-  loadTask ||= (async()=>{const response=await fetch(TRACK);if(!response.ok)throw new Error('Трек не найден в папке Music');buffer=await context.decodeAudioData(await response.arrayBuffer())})();
+  loadTask ||= (async()=>{
+    const response=await fetch(TRACK);if(!response.ok)throw new Error('Трек не найден в папке Music');
+    const bytes=await response.arrayBuffer();
+    const Decoder=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+    const decoder=new Decoder(1,1,44100);
+    buffer=await decoder.decodeAudioData(bytes.slice(0));
+    music.setSource(URL.createObjectURL(new Blob([bytes],{type:'audio/mpeg'})));
+  })();
   try{await loadTask}catch(e){loadTask=null;throw e}
 }
-function stopSource(){if(source){try{source.stop()}catch{}source.disconnect();source=null}}
+function stopSource(){music.stop()}
 function resetInputs(preserveHolds=false){activeInputs.clear();if(!preserveHolds)held.clear();pads.forEach(p=>p.classList.remove('active'))}
 function backButton(show){const tg=window.Telegram?.WebApp;if(tg?.initData&&tg.isVersionAtLeast('6.1'))tg.BackButton?.[show?'show':'hide']()}
 async function start(){
   if(state==='paused'){await resume();return}
-  $('start').disabled=true;$('status').textContent='Пробуждаем собор · загружаем и анализируем трек…';
+  const key=`${$('length').value}:${$('chart-mode').value}`;
+  $('start').disabled=true;
   try{
-    await load();stopSource(); resetInputs();
-    duration=$('length').value==='full'?buffer.duration:Math.min(90,buffer.duration);
-    offset=Number($('offset').value)/1000;training=$('training').checked;
-    const chart=makeChart(buffer,duration,$('chart-mode').value);notes=chart.notes;chartBeat=chart.beat??60/chart.bpm;chartPhase=chart.phase??0;
-    if(!notes.length)throw new Error('Не удалось построить карту нот');
+    if(!pendingChart||preparedKey!==key){
+      $('status').textContent='Загружаем трек и готовим ноты…';
+      await load();
+      duration=$('length').value==='full'?buffer.duration:Math.min(90,buffer.duration);
+      pendingChart=makeChart(buffer,duration,$('chart-mode').value);
+      if(!pendingChart.notes.length)throw new Error('Не удалось построить карту нот');
+      preparedKey=key;
+      $('start').innerHTML='Вступить в бой со звуком <span>↗</span>';
+      $('status').textContent='Трек готов. Нажми ещё раз, чтобы включить звук и начать бой.';
+      return;
+    }
+    // Native play is invoked inside this click, before any asynchronous work.
+    const playback=music.play();
+    $('status').textContent='Включаем звук…';
+    await playback;
+    resetInputs();offset=Number($('offset').value)/1000;training=$('training').checked;
+    notes=pendingChart.notes.map(n=>({...n,state:'pending'}));chartBeat=pendingChart.beat??60/pendingChart.bpm;chartPhase=pendingChart.phase??0;
     hp=100;boss=100;score=0;combo=0;maxCombo=0;hitCount=0;perfectCount=0;phaseTwo=false;particles.length=0;hitEffects.length=0;flashes.fill(0);
     root.classList.remove('phase-two');$('phase').textContent='ПЕРВЫЙ ОБЕТ';$('judgment').textContent='СЛЕДУЙ РИТМУ';feedbackUntil=0;$('timing').textContent='Центр руны на линии';
-    source=context.createBufferSource();source.buffer=buffer;source.connect(context.destination);startedAt=context.currentTime+3;source.start(startedAt,0,duration);
     state='playing';$('overlay').hidden=true;$('pause').disabled=false;tgCall('disableVerticalSwipes');tgCall('enableClosingConfirmation');tgCall('requestFullscreen');tgCall('lockOrientation');backButton(true);updateUI();
-  }catch(e){$('status').textContent=`Не удалось начать бой: ${e.message}. Попробуй ещё раз.`;console.error(e)}finally{$('start').disabled=false}
+  }catch(e){
+    music.pause();
+    $('status').textContent=e.name==='NotAllowedError'?'Telegram заблокировал звук. Нажми «Вступить в бой» ещё раз.':`Не удалось включить трек: ${e.message}. Попробуй ещё раз.`;
+    console.error(e);
+  }finally{$('start').disabled=false}
 }
 function showMenu(mode){
   const paused=mode==='pause';$('overlay').hidden=false;$('settings').hidden=!paused;$('instructions').hidden=true;$('results').hidden=paused;$('restart').hidden=!paused;
@@ -54,8 +79,19 @@ function showMenu(mode){
   $('status').textContent=paused?'Смещение можно изменить перед продолжением.':'Раскладку можно сменить перед следующим боем · Прототип 0.2';
   if(!paused){$('settings').hidden=false;$('results').innerHTML=`<span>ДУШИ<b>${score.toLocaleString('ru-RU')}</b></span><span>МАКС. КОМБО<b>${maxCombo}</b></span><span>ПОПАДАНИЯ<b>${Math.floor(hitCount/notes.length*100)}%</b></span><span>ИДЕАЛЬНО<b>${perfectCount}</b></span>`}
 }
-async function pause(){if(state!=='playing')return;state='paused';resetInputs(true);await context.suspend();showMenu('pause');tgCall('enableVerticalSwipes')}
-async function resume(){offset=Number($('offset').value)/1000;await context.resume();holdGrace=gameTime()+.35;state='playing';$('overlay').hidden=true;tgCall('disableVerticalSwipes')}
+function pause(){if(state!=='playing')return;state='paused';resetInputs(true);music.pause();showMenu('pause');tgCall('enableVerticalSwipes')}
+async function resume(){
+  try{
+    const playback=music.play();
+    await playback;offset=Number($('offset').value)/1000;holdGrace=gameTime()+.35;state='playing';$('overlay').hidden=true;tgCall('disableVerticalSwipes');
+  }catch(e){$('status').textContent='Не удалось включить звук. Нажми «Продолжить» ещё раз.';console.error(e)}
+}
+audioElement.addEventListener('pause',()=>{if(state==='playing'&&audioElement.paused&&!audioElement.ended)pause()});
+audioElement.addEventListener('ended',()=>{if(state==='playing')finish(hasWon(hitCount,notes.length)?'win':'survived')});
+audioElement.addEventListener('error',()=>{
+  if(state==='playing')pause();
+  $('status').textContent='Не удалось воспроизвести трек. Закрой мини-приложение и открой его заново.';
+});
 function finish(mode){if(state!=='playing')return;state='ended';stopSource();resetInputs();$('pause').disabled=true;$('countdown').textContent='';if(score>Number(storage.get('anna.best','0')))storage.set('anna.best',score);$('best').textContent=`Личный рекорд · ${Number(storage.get('anna.best','0')).toLocaleString('ru-RU')} душ`;showMenu(mode);tgCall('enableVerticalSwipes');tgCall('disableClosingConfirmation');backButton(false)}
 function feedback(text,color='#a0e4fc'){ $('judgment').textContent=text;$('judgment').style.color=color;$('timing').textContent='Центр руны на линии';feedbackUntil=performance.now()+1000 }
 function damage(amount){hp=Math.max(0,hp-amount);combo=0;root.classList.remove('hit');$('damage').animate([{opacity:.6},{opacity:0}],{duration:350});if(hp===0&&!training)finish('dead')}
@@ -137,9 +173,9 @@ function render(now){
     let pendingDamage=0;
     for(const n of notes){if(n.state==='pending'&&t-n.time>WINDOW){n.state='miss';pendingDamage+=5;}else if(n.state==='holding'){if(![...activeInputs.values()].includes(n.lane)&&t>holdGrace){n.state='broken';held.delete(n.lane);pendingDamage+=3;}else if(t>=n.end-.04)completeHold(n)}}
     if(pendingDamage){damage(pendingDamage);feedback('ПРОМАХ','#c7807f')}
-    if(state==='playing'&&audioTime()>=duration+.35)finish(hasWon(hitCount,notes.length)?'win':'survived');
+    if(state==='playing'&&audioTime()>=duration)finish(hasWon(hitCount,notes.length)?'win':'survived');
     if(!phaseTwo&&audioTime()>duration*.52){phaseTwo=true;root.classList.add('phase-two');$('phase').textContent='ВТОРОЙ ОБЕТ · ЛЕДЯНОЙ ГНЕВ';feedback('ВТОРОЙ ОБЕТ','#e2c28a')}
-    const count=audioTime()<0?String(Math.ceil(-audioTime())):'';if(count!==countText){$('countdown').textContent=count;countText=count}
+    const count=audioTime()<3?String(Math.ceil(3-audioTime())):'';if(count!==countText){$('countdown').textContent=count;countText=count}
     if(now-lastUI>80){updateUI();lastUI=now}
   }
   const visible=state==='idle'?[{time:1,lane:0,duration:.6,state:'pending'},{time:1.7,lane:1,duration:0,state:'pending'},{time:2.3,lane:2,duration:0,state:'pending'}]:notes;
