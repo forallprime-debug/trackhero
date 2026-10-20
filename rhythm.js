@@ -178,3 +178,11 @@ function makeLeadChart(buffer,duration,bands,flux,energy,step,beat,phase){
   }
   return {notes,bpm:Math.round(60/beat),beat,phase,mode:'vocal'};
 }
+
+// Runtime uses the precomputed score, without decoding/analyzing music on a phone.
+export function preparedChart(bundle,duration,mode){
+  const chart=bundle?.modes?.[mode];
+  if(!chart||!Array.isArray(chart.notes)||!(bundle.duration>0))throw new Error('Карта трека недоступна. Обнови мини-приложение.');
+  const limit=Math.min(duration,bundle.duration);
+  return {...chart,notes:chart.notes.filter(n=>n.time>=3&&n.time<=limit-1.5&&n.end<=limit-.15).map(n=>({...n,state:'pending'}))};
+}

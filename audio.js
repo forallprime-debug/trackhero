@@ -16,3 +16,21 @@ export class MusicPlayer {
   pause(){this.media.pause()}
   stop(){this.pause();this.media.currentTime=0}
 }
+
+export async function downloadAsset(url,{onProgress=()=>{},timeoutMs=60000,signal,fetcher=fetch}={}){
+  const controller=new AbortController();let timedOut=false;
+  const abort=()=>controller.abort();
+  if(signal?.aborted)abort();else signal?.addEventListener('abort',abort,{once:true});
+  const timer=setTimeout(()=>{timedOut=true;controller.abort()},timeoutMs);
+  try{
+    const response=await fetcher(url,{signal:controller.signal});
+    if(!response.ok)throw new Error(`Файл не загружен (${response.status}). Попробуй ещё раз.`);
+    const total=Number(response.headers.get('Content-Length'))||0;
+    if(!response.body?.getReader){const bytes=await response.arrayBuffer();onProgress(bytes.byteLength,total||bytes.byteLength);return bytes}
+    const reader=response.body.getReader(),parts=[];let received=0;
+    while(true){const {done,value}=await reader.read();if(done)break;parts.push(value);received+=value.byteLength;onProgress(received,total)}
+    const bytes=new Uint8Array(received);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length}
+    return bytes.buffer;
+  }catch(e){if(timedOut)throw new Error('Загрузка заняла слишком долго. Проверь интернет и нажми «Подготовить бой» ещё раз.');throw e}
+  finally{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
+}
