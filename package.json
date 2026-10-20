@@ -1,1 +1,1 @@
-{"name":"anna-rhythm-boss","version":"0.1.0","private":true,"type":"module","scripts":{"test":"node --test tools/rhythm.test.js","start":"python3 -m http.server 8000"}}
+{"name":"anna-rhythm-boss","version":"0.1.0","private":true,"type":"module","scripts":{"test":"node --test tools/*.test.js","start":"python3 -m http.server 8000"}}
