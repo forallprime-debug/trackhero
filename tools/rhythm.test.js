@@ -1,7 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {judge, nearest, multiplier, makeChart, hasWon} from '../rhythm.js';
-test('Timing windows handle both early and late touches',()=>{for(const s of [-1,1]){assert.equal(judge(s*.06),'perfect');assert.equal(judge(s*.10),'good');assert.equal(judge(s*.17),'ok');assert.equal(judge(s*.181),null)}});
+test('Forgiving timing accepts early and late input with distinct perfect/good limits',()=>{
+  for(const s of [-1,1]){
+    assert.equal(judge(s*.09),'perfect');assert.equal(judge(s*.091),'good');
+    assert.equal(judge(s*.18),'good');assert.equal(judge(s*.181),'ok');
+    assert.equal(judge(s*.30),'ok');assert.equal(judge(s*.301),null);
+  }
+});
+test('Expanded window selects the closest spell and still rejects misses',()=>{
+  const notes=[{lane:0,time:1,state:'pending'},{lane:0,time:1.65,state:'pending'},{lane:1,time:1.4,state:'pending'}];
+  assert.equal(nearest(notes,0,.71),notes[0]);assert.equal(nearest(notes,0,1.29),notes[0]);
+  assert.equal(nearest(notes,0,1.36),notes[1]);assert.equal(nearest(notes,0,.699),null);
+  notes[0].state='hit';assert.equal(nearest(notes,0,1.29),null);
+});
 test('Nearest pending note only in pressed lane; cannot score a note twice',()=>{const notes=[{lane:0,time:1,state:'hit'},{lane:1,time:1.05,state:'pending'},{lane:0,time:1.12,state:'pending'}];assert.equal(nearest(notes,0,1.04),notes[2]);assert.equal(nearest(notes,2,1),null);assert.equal(nearest(notes,0,1.5),null)});
 test('Combo multiplier caps at four',()=>{assert.equal(multiplier(0),1);assert.equal(multiplier(10),2);assert.equal(multiplier(30),4);assert.equal(multiplier(100),4)});
 test('Audio chart is deterministic, bounded and playable with no overlapping holds',()=>{const rate=8000,duration=20,data=new Float32Array(rate*duration);for(let t=.2;t<duration;t+=.5)for(let k=0;k<400;k++)data[Math.floor(t*rate)+k]=Math.sin(k*.4)*(.8-k/500);const buffer={sampleRate:rate,duration,getChannelData:()=>data};const a=makeChart(buffer,duration),b=makeChart(buffer,duration);assert.deepEqual(a,b);assert.ok(a.notes.length>10);for(let i=0;i<a.notes.length;i++){const n=a.notes[i];assert.ok(n.time>=3&&n.end<duration);assert.ok(n.lane>=0&&n.lane<=2);if(i){assert.ok(n.time-a.notes[i-1].end>=.12);assert.ok(n.time-a.notes[i-1].time>=.48)}const previous=a.notes.slice(0,i).findLast(other=>other.lane===n.lane);if(previous)assert.ok(n.time-previous.time>=.85)}});
