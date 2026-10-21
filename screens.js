@@ -4,16 +4,16 @@ export function portraitHTML(boss,variant='start'){
   return `<div class="boss-art ${variant}-art ${boss.id}-art" aria-hidden="true"><div class="art-mask"><img class="art-underlay" src="${asset(`${prefix}-imgImage74.png`)}" alt="">${boss.id==='egor'?`<img src="${asset(`${prefix}-imgImage75.png`)}" alt="">`:''}</div><img class="art-frame" src="${asset(`${prefix}-imgFrame.png`)}" alt=""></div>`;
 }
 export function paintBoss(boss){
-  document.getElementById('boss-portrait').innerHTML=portraitHTML(boss);
+  document.getElementById('boss-portrait').innerHTML=boss.id==='egor'?`<div class="home-boss-art egor-home" aria-hidden="true"><div class="home-art-mask"><img src="assets/figma/home-egor-base.png" alt=""><img src="assets/figma/home-egor.png" alt=""></div><img class="home-art-frame" src="assets/figma/home-frame.png" alt=""></div>`:`<div class="home-boss-art anna-home">${portraitHTML(boss)}</div>`;
   document.getElementById('boss-location').textContent=boss.location;
   document.getElementById('boss-name').innerHTML=boss.title;
-  document.getElementById('boss-position').textContent=`${boss.id==='anna'?1:2} из 2`;
+  document.getElementById('boss-position').textContent=`${String(boss.position??1).padStart(2,'0')}/${String(boss.total??2).padStart(2,'0')}`;
 }
 export function paintOutcome(data){
   const screen=document.getElementById('outcome');
   screen.classList.toggle('victory',data.victory);screen.classList.toggle('defeat',!data.victory);
   screen.setAttribute('aria-label',`${data.victory?'Босс повержен':'Вы мертвы'}. Нажмите, чтобы вернуться к выбору боя`);
-  document.getElementById('result-art').innerHTML=data.victory?portraitHTML(data.boss,'victory'):'<img class="death-art" src="assets/figma/defeat-imgImage122.png" alt="">';
+  document.getElementById('result-art').innerHTML=data.victory?portraitHTML(data.boss,'victory'):'';
   document.getElementById('result-title').innerHTML=data.victory?'Босс<br>повержен':'Вы мертвы';
   document.getElementById('result-description').textContent=data.victory?data.boss.soul:'ваша душа возвращается в нексус';
   document.getElementById('result-score').textContent=data.score;

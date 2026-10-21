@@ -1,6 +1,8 @@
 // Pure timing/scoring functions shared by the game and its checks.
-export const WINDOW = .18;
-export function judge(delta) { return Math.abs(delta) <= .065 ? 'perfect' : Math.abs(delta) <= .12 ? 'good' : Math.abs(delta) <= WINDOW ? 'ok' : null; }
+export const WINDOW = .30;
+export const PERFECT_WINDOW = .09;
+export const GOOD_WINDOW = .18;
+export function judge(delta) { return Math.abs(delta) <= PERFECT_WINDOW ? 'perfect' : Math.abs(delta) <= GOOD_WINDOW ? 'good' : Math.abs(delta) <= WINDOW ? 'ok' : null; }
 export function nearest(notes, lane, time) {
   let best = null, distance = WINDOW + 1e-9;
   for (const note of notes) { const d = Math.abs(note.time - time); if (note.lane === lane && note.state === 'pending' && d <= distance) { best = note; distance = d; } }
