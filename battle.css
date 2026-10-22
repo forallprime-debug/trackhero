@@ -36,16 +36,17 @@
 @media(prefers-reduced-motion:reduce){#game[data-screen=battle] .pad.reflected .combat-card{animation:none}#game[data-screen=battle] .pad.reflected:after,#game[data-screen=battle] .pad.perfect-reflection:before{animation:none;display:none}}
 
 /* Large counters and short, central combat callouts. */
-#game[data-screen=battle]>.battle-info{position:absolute;top:calc(var(--top) + 22px);left:7%;right:7%;display:flex;justify-content:space-between;align-items:start;z-index:5;pointer-events:none}
+#game[data-screen=battle]>.battle-info{--counter-size:clamp(38px,12.5vw,62px);position:absolute;top:calc(var(--top) + 22px);left:7%;right:7%;display:flex;justify-content:space-between;align-items:start;z-index:5;pointer-events:none}
 #game[data-screen=battle]>.battle-info>div:first-child{order:2;width:auto;text-align:right}
 #game[data-screen=battle]>.battle-info .score{order:1;position:static;text-align:left}
-#game[data-screen=battle]>.battle-info .tiny{font:10px/1.3 system-ui,sans-serif;letter-spacing:.7px;color:#ee4810}
-#game[data-screen=battle]>.battle-info strong{display:block;font:400 clamp(38px,12.5vw,62px)/1.05 Angst,Georgia,serif;color:#ee4810;letter-spacing:-1px;transform-origin:center;text-shadow:0 2px 8px #0008}
+/* Move only the labels; retain their original flow space so the numbers stay fixed. */
+#game[data-screen=battle]>.battle-info .tiny{font:10px/1.3 system-ui,sans-serif;letter-spacing:.7px;color:#ee4810;display:inline-block;transform:translateY(calc(100% + var(--counter-size)*1.05 + 2px))}
+#game[data-screen=battle]>.battle-info strong{display:block;font:400 var(--counter-size)/1.05 Angst,Georgia,serif;color:#ee4810;letter-spacing:-1px;transform-origin:center;text-shadow:0 2px 8px #0008}
 #game[data-screen=battle]>.judgment{position:absolute;top:46%;left:5%;right:5%;transform:translateY(-50%);z-index:6;pointer-events:none;text-align:center;min-width:0}
 #game[data-screen=battle]>.judgment #judgment{display:block;opacity:0;font:400 clamp(25px,8vw,40px)/1.05 Angst,Georgia,serif;letter-spacing:0;text-shadow:0 2px 14px #000,0 0 8px #000}
 #game[data-screen=battle]>.judgment #timing,#game[data-screen=battle]>.judgment #multiplier{display:none}
 #game:not([data-screen=battle])>.battle-info,#game:not([data-screen=battle])>.judgment{visibility:hidden}
-#game[data-screen=battle]>.battle-info>div:first-child strong{font:400 clamp(38px,12.5vw,62px)/1.05 Angst,Georgia,serif;color:#ee4810}
+#game[data-screen=battle]>.battle-info>div:first-child strong{font:400 var(--counter-size)/1.05 Angst,Georgia,serif;color:#ee4810}
 .fight-art-stage{position:absolute;top:0;left:50%;width:360px;height:780px;transform:translateX(-50%) scale(var(--fight-scale,1));transform-origin:top center;background:#010101}
 .fight-art-mask{position:absolute;mask-size:560px 746px;-webkit-mask-size:560px 746px;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat;mask-mode:alpha}
 .fight-art-mask img{display:block;width:100%;height:100%;object-fit:cover}

@@ -33,3 +33,5 @@ button:disabled{opacity:.5;cursor:wait}
 @keyframes counterstrike{0%{opacity:0;transform:translateY(80px) scaleY(.1)}20%{opacity:1}100%{opacity:0;transform:translateY(-210px) scaleY(1)}}
 @media(max-width:650px){.motion-grid{grid-template-columns:1fr}.demo-stage{height:400px}.matchups .combat-card{max-width:220px}}
 @media(prefers-reduced-motion:reduce){.demo-stage *{animation-duration:1ms!important}.flying .incoming{transform:translateY(190px)}.contact .incoming{opacity:0}.contact .defender{outline:1px solid #d5b371;outline-offset:-20px}.contact .impact,.perfect .counter{display:none}}
+
+.kit .souls-bar{transform:none;border:0;box-shadow:none;background:transparent;height:24px;padding:7px 17px;margin:0}.kit .souls-bar i{background:linear-gradient(180deg,var(--bar-light),var(--bar-mid) 36%,var(--bar-mid) 63%,var(--bar-dark))}.kit .resource.souls-bar{height:18px;padding:5px 17px;margin-top:2px}
