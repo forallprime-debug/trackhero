@@ -77,3 +77,9 @@
 .settings-form .delay-setting output{position:static;color:#ffb7b7cc}
 .settings-form .slider-right{left:auto}
 #game[data-screen=settings]>.hud,#game[data-screen=settings]>.boss,#game[data-screen=settings]>.battle,#game[data-screen=settings]>footer{visibility:hidden}
+.roster-mask{position:absolute;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat;mask-size:303.433px 410.07px;-webkit-mask-size:303.433px 410.07px;mask-mode:alpha}
+.roster-mask img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.roster-victory .home-boss-art{transform:scale(1.25);transform-origin:top left}
+/* Cropped portrait layers must never scroll the hidden game behind the menu. */
+#game,.menu-screen{overflow:clip}
+#game>.portrait{overflow:clip}
