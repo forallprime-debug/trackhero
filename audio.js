@@ -34,3 +34,34 @@ export async function downloadAsset(url,{onProgress=()=>{},timeoutMs=60000,signa
   }catch(e){if(timedOut)throw new Error('Загрузка заняла слишком долго. Проверь интернет и нажми «Подготовить бой» ещё раз.');throw e}
   finally{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
 }
+
+// Completed downloads survive boss changes. Bound memory use on mobile WebViews.
+export class AssetCache {
+  constructor({maxBytes=32*1024*1024,loader=downloadAsset}={}){
+    this.maxBytes=maxBytes;this.loader=loader;this.entries=new Map();this.bytes=0;
+  }
+  async get(url,options={}){
+    if(options.signal?.aborted)throw new DOMException('Cancelled','AbortError');
+    if(this.entries.has(url)){
+      const bytes=this.entries.get(url);this.entries.delete(url);this.entries.set(url,bytes);
+      options.onProgress?.(bytes.byteLength,bytes.byteLength);return bytes;
+    }
+    const bytes=await this.loader(url,options);
+    if(options.signal?.aborted)throw new DOMException('Cancelled','AbortError');
+    if(bytes.byteLength<=this.maxBytes){
+      // Another caller may have completed the same URL in the meantime.
+      if(this.entries.has(url)){this.bytes-=this.entries.get(url).byteLength;this.entries.delete(url)}
+      while(this.bytes+bytes.byteLength>this.maxBytes){
+        const oldest=this.entries.keys().next().value;
+        this.bytes-=this.entries.get(oldest).byteLength;this.entries.delete(oldest);
+      }
+      this.entries.set(url,bytes);this.bytes+=bytes.byteLength;
+    }
+    return bytes;
+  }
+}
+
+export function playbackAsset(boss,length,canPlayAAC){
+  if(canPlayAAC)return {url:length==='full'?boss.audio:boss.shortAudio,type:'audio/mp4'};
+  return {url:boss.source,type:'audio/mpeg'};
+}

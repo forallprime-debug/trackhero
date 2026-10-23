@@ -3,7 +3,7 @@
 .state-perfect i:after{content:"";position:absolute;inset:-18%;border:1px solid #f6d79a88;border-radius:50%}.animate-perfect i{border-radius:50%}
 
 /* Preview atlas is deliberately scoped to the kit until combat art is approved. */
-.kit .combat-card{background-image:url('assets/battle/combat-kit-v2.png');clip-path:none;aspect-ratio:1}
+.kit .combat-card{background-image:url('assets/battle/combat-kit-v2.webp');clip-path:none;aspect-ratio:1}
 .kit .ability-card{background-position-y:100%}.kit .attack-card{background-position-y:0%}
 .demo-stage{position:relative;height:420px;width:280px;max-width:100%;margin:auto;isolation:isolate;--magic:#a965e1;background:radial-gradient(ellipse at 50% 80%,#826b4020,transparent 65%);overflow:hidden}
 .demo-stage .combat-card{position:absolute;width:210px;max-width:75%;left:12.5%}

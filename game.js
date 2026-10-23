@@ -1,18 +1,27 @@
-import {ABILITIES,ATLAS_URL,drawMagicCard} from './combat.js?v=combat-3';
-import {BOSSES, preparationKey, outcome} from './bosses.js?v=names-7';
-import {paintBoss,paintBattle,paintOutcome,fitScreens} from './screens.js?v=portrait-load-6';
-import {MusicPlayer, downloadAsset} from './audio.js?v=ready-7';
+import {ABILITIES,ATLAS_URL,drawMagicCard} from './combat.js?v=perf-9';
+import {BOSSES, preparationKey, outcome} from './bosses.js?v=perf-9';
+import {paintBoss,paintBattle,paintOutcome,fitScreens,hydrateDeferredImages} from './screens.js?v=perf-9';
+import {MusicPlayer, AssetCache, playbackAsset} from './audio.js?v=perf-9';
 import {WINDOW, PERFECT_WINDOW, judge, nearest, multiplier, preparedChart, VICTORY_RATE, hasWon} from './rhythm.js?v=combat-2';
 const $ = id => document.getElementById(id), root = $('game'), canvas = $('highway'), pen = canvas.getContext('2d'), pads = [...document.querySelectorAll('.pad')];
 const NOTE_TRAVEL = 1.8;
 const audioElement=document.createElement('audio');audioElement.hidden=true;document.body.append(audioElement);
 const music=new MusicPlayer(audioElement);
+const assetCache=new AssetCache();
+let loadedAssetKey='',loadingAssetKey='';
 let pendingChart=null,preparedKey='',preparationRevision=0,loadController;
 let selectedBoss=BOSSES[0], loading=false, audioBlobURL;
 const fit=fitScreens(root);
 const laneColors=ABILITIES.map(a=>a.color);
-const combatAtlas=new Image();combatAtlas.src=ATLAS_URL;
-const laneIcons=['01 Shield.png','02 Flame.png','03 Sword.png'].map(name=>{const img=new Image();img.src=`assets/${name}`;return img});
+const combatAtlas=new Image();
+const laneIcons=['01 Shield.webp','02 Flame.webp','03 Sword.webp'].map(()=>new Image());
+let secondaryPrepared=false;
+function prepareSecondaryAssets(){
+ if(secondaryPrepared)return;secondaryPrepared=true;
+ combatAtlas.src=ATLAS_URL;
+ ['01 Shield.webp','02 Flame.webp','03 Sword.webp'].forEach((name,i)=>laneIcons[i].src=`assets/${name}`);
+ hydrateDeferredImages($('overlay'));hydrateDeferredImages($('outcome'));
+}
 let chartBeat=1,chartPhase=0;
 let chartData, musicReady=false, duration = 90, state = 'idle', notes = [], training = false, offset = 0;
 let hp=100, boss=100, score=0, combo=0, maxCombo=0, hitCount=0, perfectCount=0, feedbackUntil=0;
@@ -25,7 +34,7 @@ function trackGoal(event,details={}){
  try{window.ym?.(113757935,'reachGoal',event,{[event]:{boss_id:selectedBoss.id,boss_name:selectedBoss.name,length:$('length').value,chart_mode:$('chart-mode').value,training:$('training').checked,...details}})}catch{}
 }
 function bestText(){ $('best').textContent=`Личный рекорд: ${Number(storage.get(`${selectedBoss.id}.best`,'0')).toLocaleString('ru-RU')}` }
-function selectBoss(index,trackSelection=true){if(loading||state==='playing'||state==='paused')return;selectedBoss=BOSSES[(index+BOSSES.length)%BOSSES.length];preparationRevision++;loadController?.abort();stopSource();if(audioBlobURL){URL.revokeObjectURL(audioBlobURL);audioBlobURL=null}musicReady=false;chartData=null;loadTask=null;pendingChart=null;preparedKey='';paintBoss({...selectedBoss,position:BOSSES.indexOf(selectedBoss)+1,total:BOSSES.length});bestText();document.querySelector('.boss h1').textContent=selectedBoss.name;paintBattle(selectedBoss);document.querySelector('.track span').textContent=selectedBoss.track;document.querySelector('.bossbar').setAttribute('aria-label',`Здоровье: ${selectedBoss.name}`);$('full-track').textContent=`Весь трек - ${fmt(Math.round(selectedBoss.duration))}`;$('start').textContent='В бой';$('status').textContent='';prepareBattle();if(trackSelection)trackGoal('boss_select');}
+function selectBoss(index,trackSelection=true){if(loading||state==='playing'||state==='paused')return;selectedBoss=BOSSES[(index+BOSSES.length)%BOSSES.length];preparationRevision++;loadController?.abort();stopSource();if(audioBlobURL){URL.revokeObjectURL(audioBlobURL);audioBlobURL=null}musicReady=false;chartData=null;loadTask=null;pendingChart=null;preparedKey='';paintBoss({...selectedBoss,position:BOSSES.indexOf(selectedBoss)+1,total:BOSSES.length});bestText();document.querySelector('.boss h1').textContent=selectedBoss.name;document.querySelector('.track span').textContent=selectedBoss.track;document.querySelector('.bossbar').setAttribute('aria-label',`Здоровье: ${selectedBoss.name}`);$('full-track').textContent=`Весь трек - ${fmt(Math.round(selectedBoss.duration))}`;$('start').textContent='В бой';$('status').textContent='';prepareBattle();if(trackSelection)trackGoal('boss_select');}
 $('boss-prev').addEventListener('click',()=>selectBoss(BOSSES.indexOf(selectedBoss)-1));$('boss-next').addEventListener('click',()=>selectBoss(BOSSES.indexOf(selectedBoss)+1));
 let swipeStart=null;
 $('boss-portrait').addEventListener('pointerdown',e=>{swipeStart={x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId)});
@@ -62,15 +71,18 @@ function audioTime(){return music.currentTime}
 function gameTime(){return audioTime()-offset}
 function fmt(t){t=Math.max(0,Math.floor(t));return `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`}
 async function load(){
-  if(musicReady&&chartData)return;
+  const playback=playbackAsset(selectedBoss,$('length').value,!!audioElement.canPlayType('audio/mp4; codecs="mp4a.40.2"'));
+  if(musicReady&&chartData&&loadedAssetKey===playback.url)return;
+  if(loadTask&&loadingAssetKey!==playback.url){loadController?.abort();loadTask=null}
+
   if(!loadTask){
     const controller=new AbortController();loadController=controller;const boss=selectedBoss;
+    loadingAssetKey=playback.url;musicReady=false;
     loadTask=(async()=>{
       try{
-        const aac=!!audioElement.canPlayType('audio/mp4; codecs="mp4a.40.2"');
         const [mapBytes,musicBytes]=await Promise.all([
-          downloadAsset(boss.chart,{signal:controller.signal,timeoutMs:20000}),
-          downloadAsset(aac?boss.audio:boss.source,{signal:controller.signal,onProgress:(received,total)=>{
+          assetCache.get(boss.chart,{signal:controller.signal,timeoutMs:20000}),
+          assetCache.get(playback.url,{signal:controller.signal,onProgress:(received,total)=>{
             if(controller.signal.aborted||boss!==selectedBoss)return;
             const mb=(received/1048576).toFixed(1);
             $('start').textContent=total?`Загрузка ${Math.min(100,Math.round(received/total*100))}%`:'Загрузка…';
@@ -80,12 +92,13 @@ async function load(){
         if(controller.signal.aborted||boss!==selectedBoss)throw new DOMException('Cancelled','AbortError');
         const map=JSON.parse(new TextDecoder().decode(mapBytes));
         if(!map.modes||!map.duration)throw new Error('Повреждена карта трека');
-        audioBlobURL=URL.createObjectURL(new Blob([musicBytes],{type:aac?'audio/mp4':'audio/mpeg'}));music.setSource(audioBlobURL);
-        chartData=map;musicReady=true;
+        if(audioBlobURL)URL.revokeObjectURL(audioBlobURL);
+        audioBlobURL=URL.createObjectURL(new Blob([musicBytes],{type:playback.type}));music.setSource(audioBlobURL);
+        chartData=map;musicReady=true;loadedAssetKey=playback.url;
       }catch(e){controller.abort();throw e}
     })();
   }
-  const task=loadTask;try{await task}catch(e){if(loadTask===task)loadTask=null;throw e}
+  const task=loadTask;try{await task}finally{if(loadTask===task)loadTask=null}
 }
 async function prepareBattle(){
  const revision=++preparationRevision,key=preparationKey(selectedBoss,$('length').value,$('chart-mode').value);
@@ -96,6 +109,7 @@ async function prepareBattle(){
   duration=$('length').value==='full'?chartData.duration:Math.min(90,chartData.duration);
   pendingChart=preparedChart(chartData,duration,$('chart-mode').value);
   if(!pendingChart.notes.length)throw new Error('В карте нет нот');
+  paintBattle(selectedBoss);prepareSecondaryAssets();
   preparedKey=key;$('start').textContent='В бой';$('start').disabled=false;$('status').textContent='';
  }catch(e){
   if(revision!==preparationRevision)return;
@@ -128,7 +142,7 @@ async function start(){
     console.error(e);
   }finally{loading=false;$('start').disabled=false;$('start-screen').classList.remove('busy');$('chart-mode').disabled=false;document.querySelectorAll('[data-length],.boss-arrow,#open-settings').forEach(b=>b.disabled=false)}
 }
-function showMenu(){ $('overlay').hidden=false;$('pause-status').textContent='';$('resume').focus() }
+function showMenu(){ prepareSecondaryAssets();$('overlay').hidden=false;$('pause-status').textContent='';$('resume').focus() }
 function returnToStart(){state='idle';stopSource();resetInputs();$('overlay').hidden=true;$('outcome').hidden=true;$('start-screen').hidden=false;root.dataset.screen='start';$('pause').disabled=true;tgCall('disableClosingConfirmation');backButton(false);bestText();prepareBattle();$('start').focus()}
 function pause(){if(state!=='playing')return;state='paused';resetInputs(true);music.pause();showMenu('pause')}
 async function resume(){

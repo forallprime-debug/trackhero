@@ -1,40 +1,40 @@
 // Portrait layers and crop geometry exported from the five Figma cards.
 export const BOSS_ART = {
   "anna": {
-    "imgImage74": "assets/figma/cards-anna-imgImage74.png",
-    "imgFrame": "assets/figma/cards-anna-imgFrame.png",
+    "imgImage74": "assets/figma/cards-anna-imgImage74.webp",
+    "imgFrame": "assets/figma/cards-anna-imgFrame.webp",
     "imgImage73": "assets/figma/cards-anna-imgImage73.svg"
   },
   "egor": {
-    "imgImage74": "assets/figma/cards-egor-imgImage74.png",
-    "imgImage75": "assets/figma/cards-egor-imgImage75.png",
-    "imgFrame": "assets/figma/cards-egor-imgFrame.png",
+    "imgImage74": "assets/figma/cards-egor-imgImage74.webp",
+    "imgImage75": "assets/figma/cards-egor-imgImage75.webp",
+    "imgFrame": "assets/figma/cards-egor-imgFrame.webp",
     "imgImage73": "assets/figma/cards-egor-imgImage73.svg"
   },
   "princes": {
-    "imgImage74": "assets/figma/cards-princes-imgImage74.png",
-    "imgImage75": "assets/figma/cards-princes-imgImage75.png",
-    "imgImage76": "assets/figma/cards-princes-imgImage76.png",
-    "imgFrame": "assets/figma/cards-princes-imgFrame.png",
+    "imgImage74": "assets/figma/cards-princes-imgImage74.webp",
+    "imgImage75": "assets/figma/cards-princes-imgImage75.webp",
+    "imgImage76": "assets/figma/cards-princes-imgImage76.webp",
+    "imgFrame": "assets/figma/cards-princes-imgFrame.webp",
     "imgImage73": "assets/figma/cards-princes-imgImage73.svg",
-    "imgImage237": "assets/battle/princes-imgImage237.png",
+    "imgImage237": "assets/battle/princes-imgImage237.webp",
     "imgImage236": "assets/battle/princes-imgImage236.svg"
   },
   "mia": {
-    "imgImage74": "assets/figma/cards-mia-imgImage74.png",
-    "imgImage75": "assets/figma/cards-mia-imgImage75.png",
-    "imgImage76": "assets/figma/cards-mia-imgImage76.png",
-    "imgImage77": "assets/figma/cards-mia-imgImage77.png",
-    "imgFrame": "assets/figma/cards-mia-imgFrame.png",
+    "imgImage74": "assets/figma/cards-mia-imgImage74.webp",
+    "imgImage75": "assets/figma/cards-mia-imgImage75.webp",
+    "imgImage76": "assets/figma/cards-mia-imgImage76.webp",
+    "imgImage77": "assets/figma/cards-mia-imgImage77.webp",
+    "imgFrame": "assets/figma/cards-mia-imgFrame.webp",
     "imgImage73": "assets/figma/cards-mia-imgImage73.svg",
-    "imgImage237": "assets/battle/mia-imgImage237.png",
+    "imgImage237": "assets/battle/mia-imgImage237.webp",
     "imgImage236": "assets/battle/mia-imgImage236.svg"
   },
   "heir": {
-    "imgImage74": "assets/figma/cards-heir-imgImage74.png",
-    "imgFrame": "assets/figma/cards-heir-imgFrame.png",
+    "imgImage74": "assets/figma/cards-heir-imgImage74.webp",
+    "imgFrame": "assets/figma/cards-heir-imgFrame.webp",
     "imgImage73": "assets/figma/cards-heir-imgImage73.svg",
-    "imgImage237": "assets/battle/heir-imgImage237.png",
+    "imgImage237": "assets/battle/heir-imgImage237.webp",
     "imgImage236": "assets/battle/heir-imgImage236.svg"
   }
 };

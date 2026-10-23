@@ -3,24 +3,24 @@
 .souls-bar:before{content:"";position:absolute;inset:20.5% calc(var(--bar-height)*.654);background:linear-gradient(#050605,#11110e,#060705);box-shadow:inset 0 1px 3px #000;z-index:-1}
 .souls-bar:after{display:none;content:none}
 .souls-frame{position:absolute;inset:0;z-index:2;pointer-events:none}
-.souls-frame:before,.souls-frame:after{content:"";position:absolute;top:0;bottom:0;width:calc(var(--bar-height)*.654);background-image:url('assets/battle/hud-kit-v2.png');background-size:3478.4314% 1137.1795%;background-repeat:no-repeat}
+.souls-frame:before,.souls-frame:after{content:"";position:absolute;top:0;bottom:0;width:calc(var(--bar-height)*.654);background-image:url('assets/battle/hud-kit-v2.webp');background-size:3478.4314% 1137.1795%;background-repeat:no-repeat}
 .souls-frame:before{left:0;background-position:30.412% 52.6576%;clip-path:polygon(0 50%,67% 1%,100% 1%,100% 99%,67% 99%)}
 .souls-frame:after{right:0;background-position:97.852% 52.6576%;clip-path:polygon(0 1%,33% 1%,100% 50%,33% 99%,0 99%)}
-.souls-rail{position:absolute;inset:0 calc(var(--bar-height)*.654);background:url('assets/battle/hud-kit-v2.png') 86.858% 52.6576% / 159.5324% 1137.1795% no-repeat;mask:linear-gradient(#000 0 20.5%,transparent 20.5% 79.5%,#000 79.5%);-webkit-mask:linear-gradient(#000 0 20.5%,transparent 20.5% 79.5%,#000 79.5%)}
-.souls-bar>i{display:block;position:relative;overflow:hidden;width:100%;height:100%;background:#7c181c url('assets/battle/hud-kit-v2.png') var(--fill-position) / var(--fill-size) no-repeat;box-shadow:inset 0 1px #ffffff28,inset 0 -1px #0007;transition:width .2s}
+.souls-rail{position:absolute;inset:0 calc(var(--bar-height)*.654);background:url('assets/battle/hud-kit-v2.webp') 86.858% 52.6576% / 159.5324% 1137.1795% no-repeat;mask:linear-gradient(#000 0 20.5%,transparent 20.5% 79.5%,#000 79.5%);-webkit-mask:linear-gradient(#000 0 20.5%,transparent 20.5% 79.5%,#000 79.5%)}
+.souls-bar>i{display:block;position:relative;overflow:hidden;width:100%;height:100%;background:#7c181c url('assets/battle/hud-kit-v2.webp') var(--fill-position) / var(--fill-size) no-repeat;box-shadow:inset 0 1px #ffffff28,inset 0 -1px #0007;transition:width .2s}
 .souls-bar>i:after{content:"";position:absolute;inset:0 0 0 auto;width:2px;background:#fff0d6;box-shadow:0 0 4px 1px #fff2d688;opacity:.85;pointer-events:none}
 .souls-bar--blue{--fill-size:443.5% 3856.522%;--fill-position:56.0408% 72.2222%}
 .souls-bar--green{--fill-size:443.5% 3856.522%;--fill-position:56.0408% 79.2824%}
-.souls-emblem{display:block;flex:none;width:48px;height:48px;aspect-ratio:1;background:url('assets/battle/hud-kit-v2.png') 33.729% 76% / 1025.434% 547.531% no-repeat;clip-path:polygon(29.3% 0,70.7% 0,100% 29.3%,100% 70.7%,70.7% 100%,29.3% 100%,0 70.7%,0 29.3%);position:relative;z-index:3;border:0;transform:none}
+.souls-emblem{display:block;flex:none;width:48px;height:48px;aspect-ratio:1;background:url('assets/battle/hud-kit-v2.webp') 33.729% 76% / 1025.434% 547.531% no-repeat;clip-path:polygon(29.3% 0,70.7% 0,100% 29.3%,100% 70.7%,70.7% 100%,29.3% 100%,0 70.7%,0 29.3%);position:relative;z-index:3;border:0;transform:none}
 .souls-pause{display:block;flex:none;box-sizing:border-box;width:44px;height:44px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;position:relative;cursor:pointer;color:transparent;font-size:0}
-.souls-pause:before{content:"";position:absolute;inset:2px;background:url('assets/battle/hud-kit-v2.png') 96.294% 75.0663% / 1385.9375% 666.9173% no-repeat;clip-path:polygon(10% 0,90% 0,100% 10%,100% 90%,90% 100%,10% 100%,0 90%,0 10%)}
+.souls-pause:before{content:"";position:absolute;inset:2px;background:url('assets/battle/hud-kit-v2.webp') 96.294% 75.0663% / 1385.9375% 666.9173% no-repeat;clip-path:polygon(10% 0,90% 0,100% 10%,100% 90%,90% 100%,10% 100%,0 90%,0 10%)}
 .souls-pause:hover:before{filter:brightness(1.15)}.souls-pause:active:before{transform:scale(.95)}
 .souls-pause:focus-visible{outline:2px solid #d5bd91;outline-offset:3px}.souls-pause:disabled{opacity:.5;cursor:default}
 /* Existing game IDs keep driving fill percentages independently of frame length. */
 #game[data-screen=battle] .bossbar.souls-bar{--bar-height:24px;height:var(--bar-height);padding:calc(var(--bar-height)*.205) calc(var(--bar-height)*.654);border:0;background:transparent;box-shadow:none;border-radius:0}
 #game[data-screen=battle] .bossbar.souls-bar:before{display:block;content:"";font-size:0;inset:20.5% calc(var(--bar-height)*.654);background:linear-gradient(#050605,#11110e,#060705)}
 #game[data-screen=battle] .bossbar.souls-bar:after{display:none;content:none}
-#game[data-screen=battle] .bossbar.souls-bar i,#game[data-screen=battle] .player .bar.souls-bar i{background:#7c181c url('assets/battle/hud-kit-v2.png') var(--fill-position) / var(--fill-size) no-repeat}
+#game[data-screen=battle] .bossbar.souls-bar i,#game[data-screen=battle] .player .bar.souls-bar i{background:#7c181c url('assets/battle/hud-kit-v2.webp') var(--fill-position) / var(--fill-size) no-repeat}
 #game[data-screen=battle] .bossbar b{display:none}
 #game[data-screen=battle] .player{gap:6px;width:calc(100% - 52px);align-items:center}
 #game[data-screen=battle] .player>div{flex:1;min-width:0;margin-left:0}
@@ -32,7 +32,7 @@
 /* UI kit uses the identical components, enlarged for inspection. */
 .kit .status-preview{padding:20px 0;min-width:0}
 .kit .status-preview .souls-bar{--bar-height:36px;height:var(--bar-height);padding:calc(var(--bar-height)*.205) calc(var(--bar-height)*.654);margin:0;border:0;transform:none;background:transparent;box-shadow:none}
-.kit .status-preview .souls-bar i{background:#7c181c url('assets/battle/hud-kit-v2.png') var(--fill-position) / var(--fill-size) no-repeat}
+.kit .status-preview .souls-bar i{background:#7c181c url('assets/battle/hud-kit-v2.webp') var(--fill-position) / var(--fill-size) no-repeat}
 .kit .status-player{display:flex;align-items:center;gap:10px;margin:24px 0 16px}
 .kit .status-player .souls-emblem{width:70px;height:70px}
 .kit .status-player .status-resources{flex:1;min-width:0}

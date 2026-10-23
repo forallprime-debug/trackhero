@@ -1,4 +1,4 @@
-import {BOSS_ART,CARD_GEOMETRY,FIGHT_GEOMETRY} from './boss-art.js?v=bosses-5';
+import {BOSS_ART,CARD_GEOMETRY,FIGHT_GEOMETRY} from './boss-art.js?v=perf-9';
 const asset=name=>`assets/figma/${name}`;
 // Figma exports include older bosses underneath the final, opaque portrait.
 const PORTRAIT_LAYER={anna:'imgImage74',egor:'imgImage75',princes:'imgImage76',mia:'imgImage77',heir:'imgImage74'};
@@ -13,6 +13,9 @@ export async function revealPortrait(container){
   }catch{ /* Keep failed or partially downloaded portraits hidden. */ }
  }
 }
+export function hydrateDeferredImages(container){
+ for(const img of container.querySelectorAll('img[data-src]')){img.src=img.dataset.src;img.removeAttribute('data-src')}
+}
 export function homePortraitHTML(boss){
  const art=BOSS_ART[boss.id],g=CARD_GEOMETRY[boss.id];
  const layers=`<img src="${art[PORTRAIT_LAYER[boss.id]]}" alt="">`;
@@ -22,7 +25,7 @@ export function portraitHTML(boss,variant='start'){
  if(variant==='start')return homePortraitHTML(boss);
  if(!['anna','egor'].includes(boss.id))return `<div class="boss-art victory-art roster-victory">${homePortraitHTML(boss)}</div>`;
  const prefix=`victory-${boss.id}`;
- return `<div class="boss-art victory-art ${boss.id}-art" aria-hidden="true"><div class="art-mask"><img class="art-underlay" src="${asset(`${prefix}-${boss.id==='egor'?'imgImage75':'imgImage74'}.png`)}" alt=""></div><img class="art-frame" src="${asset(`${prefix}-imgFrame.png`)}" alt=""></div>`;
+ return `<div class="boss-art victory-art ${boss.id}-art" aria-hidden="true"><div class="art-mask"><img class="art-underlay" src="${asset(`${prefix}-${boss.id==='egor'?'imgImage75':'imgImage74'}.webp`)}" alt=""></div><img class="art-frame" src="${asset(`${prefix}-imgFrame.webp`)}" alt=""></div>`;
 }
 export function paintBattle(boss){
  const portrait=document.querySelector('.portrait'),g=FIGHT_GEOMETRY[boss.id];
