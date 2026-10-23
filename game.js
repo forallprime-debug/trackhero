@@ -1,5 +1,5 @@
 import {ABILITIES,ATLAS_URL,drawMagicCard} from './combat.js?v=combat-3';
-import {BOSSES, preparationKey, outcome} from './bosses.js?v=bosses-5';
+import {BOSSES, preparationKey, outcome} from './bosses.js?v=names-7';
 import {paintBoss,paintBattle,paintOutcome,fitScreens} from './screens.js?v=bosses-5';
 import {MusicPlayer, downloadAsset} from './audio.js?v=ready-7';
 import {WINDOW, PERFECT_WINDOW, judge, nearest, multiplier, preparedChart, VICTORY_RATE, hasWon} from './rhythm.js?v=combat-2';
