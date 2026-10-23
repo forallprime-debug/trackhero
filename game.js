@@ -20,8 +20,12 @@ let width=400, height=350, lastUI=0, phaseTwo=false, countText='', loadTask, hol
 const held = new Map(), activeInputs = new Map(), flashes=[0,0,0], particles=[], hitEffects=[];
 const storage={get(k,f=''){try{return localStorage.getItem(k)??f}catch{return f}},set(k,v){try{localStorage.setItem(k,String(v))}catch{}}};
 $('offset').value=storage.get('anna.offset','0'); $('offset-value').textContent=`${$('offset').value} мс`;
+// Analytics must never interrupt gameplay or delay native audio playback.
+function trackGoal(event,details={}){
+ try{window.ym?.(113757935,'reachGoal',event,{[event]:{boss_id:selectedBoss.id,boss_name:selectedBoss.name,length:$('length').value,chart_mode:$('chart-mode').value,training:$('training').checked,...details}})}catch{}
+}
 function bestText(){ $('best').textContent=`Личный рекорд: ${Number(storage.get(`${selectedBoss.id}.best`,'0')).toLocaleString('ru-RU')}` }
-function selectBoss(index){if(loading||state==='playing'||state==='paused')return;selectedBoss=BOSSES[(index+BOSSES.length)%BOSSES.length];preparationRevision++;loadController?.abort();stopSource();if(audioBlobURL){URL.revokeObjectURL(audioBlobURL);audioBlobURL=null}musicReady=false;chartData=null;loadTask=null;pendingChart=null;preparedKey='';paintBoss({...selectedBoss,position:BOSSES.indexOf(selectedBoss)+1,total:BOSSES.length});bestText();document.querySelector('.boss h1').textContent=selectedBoss.name;paintBattle(selectedBoss);document.querySelector('.track span').textContent=selectedBoss.track;document.querySelector('.bossbar').setAttribute('aria-label',`Здоровье: ${selectedBoss.name}`);$('full-track').textContent=`Весь трек - ${fmt(Math.round(selectedBoss.duration))}`;$('start').textContent='В бой';$('status').textContent='';prepareBattle();}
+function selectBoss(index,trackSelection=true){if(loading||state==='playing'||state==='paused')return;selectedBoss=BOSSES[(index+BOSSES.length)%BOSSES.length];preparationRevision++;loadController?.abort();stopSource();if(audioBlobURL){URL.revokeObjectURL(audioBlobURL);audioBlobURL=null}musicReady=false;chartData=null;loadTask=null;pendingChart=null;preparedKey='';paintBoss({...selectedBoss,position:BOSSES.indexOf(selectedBoss)+1,total:BOSSES.length});bestText();document.querySelector('.boss h1').textContent=selectedBoss.name;paintBattle(selectedBoss);document.querySelector('.track span').textContent=selectedBoss.track;document.querySelector('.bossbar').setAttribute('aria-label',`Здоровье: ${selectedBoss.name}`);$('full-track').textContent=`Весь трек - ${fmt(Math.round(selectedBoss.duration))}`;$('start').textContent='В бой';$('status').textContent='';prepareBattle();if(trackSelection)trackGoal('boss_select');}
 $('boss-prev').addEventListener('click',()=>selectBoss(BOSSES.indexOf(selectedBoss)-1));$('boss-next').addEventListener('click',()=>selectBoss(BOSSES.indexOf(selectedBoss)+1));
 let swipeStart=null;
 $('boss-portrait').addEventListener('pointerdown',e=>{swipeStart={x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId)});
@@ -48,7 +52,7 @@ $('cancel-settings').addEventListener('click',()=>{
 });
 function updateOffset(){ $('offset-value').textContent=`${$('offset').value} мс`;$('offset').style.setProperty('--offset-progress',`${(Number($('offset').value)+300)/6}%`) }
 $('offset').addEventListener('input',updateOffset);updateOffset();
-selectBoss(0);
+selectBoss(0,false);
 function tgCall(method,...args){ try{ const tg=window.Telegram?.WebApp; if(!tg?.initData)return; const versions={requestFullscreen:'8.0',lockOrientation:'8.0',disableVerticalSwipes:'7.7',enableClosingConfirmation:'6.2',disableClosingConfirmation:'6.2'};if(versions[method]&&!tg.isVersionAtLeast(versions[method]))return;if(tg[method])return tg[method](...args); }catch{} }
 function setupTelegram(){ const tg=window.Telegram?.WebApp;if(!tg?.initData)return;tgCall('ready');tgCall('disableVerticalSwipes');tgCall('expand');tgCall('setHeaderColor','#070707');tgCall('setBackgroundColor','#070707');const safe=()=>{const a=tg.safeAreaInset||{},b=tg.contentSafeAreaInset||{};root.style.setProperty('--tg-top',`${(a.top||0)+(b.top||0)+10}px`);root.style.setProperty('--tg-bottom',`${Math.max(a.bottom||0,b.bottom||0)+10}px`)};safe();fit();tg.onEvent('safeAreaChanged',()=>{safe();fit()});tg.onEvent('contentSafeAreaChanged',()=>{safe();fit()});tg.onEvent('deactivated',()=>pause());tg.BackButton?.onClick(()=>pause());}
 setupTelegram();
@@ -117,7 +121,7 @@ async function start(){
     notes=pendingChart.notes.map(n=>({...n,state:'pending'}));chartBeat=pendingChart.beat??60/pendingChart.bpm;chartPhase=pendingChart.phase??0;
     hp=100;boss=100;score=0;combo=0;maxCombo=0;hitCount=0;perfectCount=0;phaseTwo=false;particles.length=0;hitEffects.length=0;flashes.fill(0);
     root.classList.remove('phase-two');$('phase').textContent='ПЕРВЫЙ ОБЕТ';$('judgment').getAnimations().forEach(a=>a.cancel());$('judgment').textContent='';feedbackUntil=0;$('timing').textContent='';
-    state='playing';root.dataset.screen='battle';$('start-screen').hidden=true;$('outcome').hidden=true;$('overlay').hidden=true;$('pause').disabled=false;tgCall('disableVerticalSwipes');tgCall('enableClosingConfirmation');tgCall('requestFullscreen');tgCall('lockOrientation');backButton(true);updateUI();
+    state='playing';trackGoal('battle_start');root.dataset.screen='battle';$('start-screen').hidden=true;$('outcome').hidden=true;$('overlay').hidden=true;$('pause').disabled=false;tgCall('disableVerticalSwipes');tgCall('enableClosingConfirmation');tgCall('requestFullscreen');tgCall('lockOrientation');backButton(true);updateUI();
   }catch(e){
     music.pause();
     $('status').textContent=e.name==='NotAllowedError'?'Не удалось включить звук. Нажми «В бой» ещё раз.':`Не удалось включить трек: ${e.message}. Попробуй ещё раз.`;
@@ -139,7 +143,7 @@ audioElement.addEventListener('error',()=>{
   if(state==='playing')pause();
   $('status').textContent='Не удалось воспроизвести трек. Закрой мини-приложение и открой его заново.';
 });
-function finish(mode){if(state!=='playing')return;state='ended';stopSource();resetInputs();$('pause').disabled=true;$('countdown').textContent='';const recordKey=`${selectedBoss.id}.best`;if(score>Number(storage.get(recordKey,'0')))storage.set(recordKey,score);bestText();paintOutcome(outcome(mode,selectedBoss,{score,hits:hitCount,total:notes.length,combo:maxCombo}));root.dataset.screen='result';$('outcome').hidden=false;$('overlay').hidden=true;$('outcome').focus();tgCall('disableClosingConfirmation');backButton(false)}
+function finish(mode){if(state!=='playing')return;state='ended';trackGoal('battle_finish',{result:mode,score,hits:hitCount,total_notes:notes.length,max_combo:maxCombo});stopSource();resetInputs();$('pause').disabled=true;$('countdown').textContent='';const recordKey=`${selectedBoss.id}.best`;if(score>Number(storage.get(recordKey,'0')))storage.set(recordKey,score);bestText();paintOutcome(outcome(mode,selectedBoss,{score,hits:hitCount,total:notes.length,combo:maxCombo}));root.dataset.screen='result';$('outcome').hidden=false;$('overlay').hidden=true;$('outcome').focus();tgCall('disableClosingConfirmation');backButton(false)}
 function pulseMetric(id){
  const el=$(id);el.getAnimations().forEach(a=>a.cancel());
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
@@ -171,7 +175,7 @@ function press(lane,input){
 }
 function release(input){const lane=activeInputs.get(input);if(lane===undefined)return;activeInputs.delete(input);pads[lane].classList.remove('active');const note=held.get(lane);if(note){held.delete(lane);if(gameTime()<note.end-.12){note.state='broken';damage(3);feedback('ОБРЫВ','#ef4b4b')}else completeHold(note)}}
 function completeHold(note){if(note.state!=='holding')return;note.state='hit';score+=50*multiplier(combo);held.delete(note.lane);burst(note.lane);feedback('УДЕРЖАНО',ABILITIES[note.lane].color);pulseMetric('score')}
-$('start').addEventListener('click',start);$('pause').addEventListener('click',pause);$('resume').addEventListener('click',resume);$('restart').addEventListener('click',returnToStart);$('outcome').addEventListener('click',returnToStart);
+$('start').addEventListener('click',()=>{trackGoal('battle_click');start()});$('pause').addEventListener('click',pause);$('resume').addEventListener('click',resume);$('restart').addEventListener('click',returnToStart);$('outcome').addEventListener('click',returnToStart);
 for(const pad of pads){pad.addEventListener('pointerdown',e=>{e.preventDefault();pad.setPointerCapture(e.pointerId);press(Number(pad.dataset.lane),`p${e.pointerId}`)});for(const event of ['pointerup','pointercancel','lostpointercapture'])pad.addEventListener(event,e=>release(`p${e.pointerId}`));}
 const keys={KeyC:0,KeyB:1,KeyM:2,ArrowLeft:0,ArrowDown:1,ArrowRight:2};
 window.addEventListener('keydown',e=>{if((e.code==='Escape'||e.code==='Space')&&!['INPUT','SELECT','BUTTON'].includes(document.activeElement.tagName)){e.preventDefault();if(state==='playing')pause();else if(state==='paused')resume();return}if(keys[e.code]!==undefined&&state==='playing'&&!e.repeat){e.preventDefault();press(keys[e.code],e.code)}});
