@@ -1,6 +1,6 @@
 import {ABILITIES,ATLAS_URL,drawMagicCard} from './combat.js?v=combat-3';
 import {BOSSES, preparationKey, outcome} from './bosses.js?v=names-7';
-import {paintBoss,paintBattle,paintOutcome,fitScreens} from './screens.js?v=bosses-5';
+import {paintBoss,paintBattle,paintOutcome,fitScreens} from './screens.js?v=portrait-load-6';
 import {MusicPlayer, downloadAsset} from './audio.js?v=ready-7';
 import {WINDOW, PERFECT_WINDOW, judge, nearest, multiplier, preparedChart, VICTORY_RATE, hasWon} from './rhythm.js?v=combat-2';
 const $ = id => document.getElementById(id), root = $('game'), canvas = $('highway'), pen = canvas.getContext('2d'), pads = [...document.querySelectorAll('.pad')];
