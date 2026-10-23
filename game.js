@@ -1,6 +1,6 @@
 import {ABILITIES,ATLAS_URL,drawMagicCard} from './combat.js?v=perf-9';
 import {BOSSES, preparationKey, outcome} from './bosses.js?v=perf-9';
-import {paintBoss,paintBattle,paintOutcome,fitScreens,hydrateDeferredImages} from './screens.js?v=perf-9';
+import {paintBoss,paintBattle,paintOutcome,fitScreens,hydrateDeferredImages,createCoverPreloader} from './screens.js?v=cover-preload-10';
 import {MusicPlayer, AssetCache, playbackAsset} from './audio.js?v=perf-9';
 import {WINDOW, PERFECT_WINDOW, judge, nearest, multiplier, preparedChart, VICTORY_RATE, hasWon} from './rhythm.js?v=combat-2';
 const $ = id => document.getElementById(id), root = $('game'), canvas = $('highway'), pen = canvas.getContext('2d'), pads = [...document.querySelectorAll('.pad')];
@@ -15,12 +15,24 @@ const fit=fitScreens(root);
 const laneColors=ABILITIES.map(a=>a.color);
 const combatAtlas=new Image();
 const laneIcons=['01 Shield.webp','02 Flame.webp','03 Sword.webp'].map(()=>new Image());
+const preloadCovers=createCoverPreloader();
+let coverWarmupScheduled=false;
+function scheduleCoverWarmup(){
+ if(coverWarmupScheduled)return;coverWarmupScheduled=true;
+ const run=()=>{
+  const index=BOSSES.indexOf(selectedBoss);
+  const rest=Array.from({length:BOSSES.length-1},(_,i)=>BOSSES[(index+i+1)%BOSSES.length]);
+  void preloadCovers(rest);
+ };
+ if(window.requestIdleCallback)window.requestIdleCallback(run,{timeout:1500});else setTimeout(run,0);
+}
 let secondaryPrepared=false;
 function prepareSecondaryAssets(){
  if(secondaryPrepared)return;secondaryPrepared=true;
  combatAtlas.src=ATLAS_URL;
  ['01 Shield.webp','02 Flame.webp','03 Sword.webp'].forEach((name,i)=>laneIcons[i].src=`assets/${name}`);
  hydrateDeferredImages($('overlay'));hydrateDeferredImages($('outcome'));
+ scheduleCoverWarmup();
 }
 let chartBeat=1,chartPhase=0;
 let chartData, musicReady=false, duration = 90, state = 'idle', notes = [], training = false, offset = 0;

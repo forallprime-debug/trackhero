@@ -2,6 +2,24 @@ import {BOSS_ART,CARD_GEOMETRY,FIGHT_GEOMETRY} from './boss-art.js?v=perf-9';
 const asset=name=>`assets/figma/${name}`;
 // Figma exports include older bosses underneath the final, opaque portrait.
 const PORTRAIT_LAYER={anna:'imgImage74',egor:'imgImage75',princes:'imgImage76',mia:'imgImage77',heir:'imgImage74'};
+// Keep decoded covers alive so card changes can reuse the browser image cache.
+export function createCoverPreloader(imageFactory=()=>new Image()){
+ const images=new Map();
+ function warm(src){
+  if(images.has(src))return images.get(src).ready;
+  const image=imageFactory();image.decoding='async';image.fetchPriority='low';
+  image.src=src;
+  const ready=image.decode().catch(()=>{images.delete(src)});
+  images.set(src,{image,ready});return ready;
+ }
+ return async bosses=>{
+  // One boss at a time limits background traffic on mobile connections.
+  for(const boss of bosses){
+   const art=BOSS_ART[boss.id];
+   await Promise.all([art[PORTRAIT_LAYER[boss.id]],art.imgFrame,art.imgImage73].map(warm));
+  }
+ };
+}
 export async function revealPortrait(container){
  const masks=[...container.querySelectorAll('.roster-mask,.art-mask')];
  for(const mask of masks){
