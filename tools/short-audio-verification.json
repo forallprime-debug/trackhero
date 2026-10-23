@@ -1,0 +1,37 @@
+[
+  {
+    "boss": "anna",
+    "full_bytes": 3821450,
+    "short_bytes": 1439733,
+    "duration": 90.1,
+    "first_89_seconds_identical": true
+  },
+  {
+    "boss": "egor",
+    "full_bytes": 3326899,
+    "short_bytes": 1449472,
+    "duration": 90.1,
+    "first_89_seconds_identical": true
+  },
+  {
+    "boss": "princes",
+    "full_bytes": 3537184,
+    "short_bytes": 1502049,
+    "duration": 90.1,
+    "first_89_seconds_identical": true
+  },
+  {
+    "boss": "mia",
+    "full_bytes": 1653314,
+    "short_bytes": 1507650,
+    "duration": 90.1,
+    "first_89_seconds_identical": true
+  },
+  {
+    "boss": "heir",
+    "full_bytes": 2169519,
+    "short_bytes": 1471814,
+    "duration": 90.1,
+    "first_89_seconds_identical": true
+  }
+]

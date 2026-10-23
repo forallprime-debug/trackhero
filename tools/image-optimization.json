@@ -1,0 +1,398 @@
+[
+  {
+    "source": "assets/01 Shield.png",
+    "file": "assets/01 Shield.webp",
+    "before": 284384,
+    "after": 161524
+  },
+  {
+    "source": "assets/02 Flame.png",
+    "file": "assets/02 Flame.webp",
+    "before": 392768,
+    "after": 252050
+  },
+  {
+    "source": "assets/03 Sword.png",
+    "file": "assets/03 Sword.webp",
+    "before": 148695,
+    "after": 82696
+  },
+  {
+    "source": "assets/anna.jpg",
+    "file": "assets/anna.webp",
+    "before": 166206,
+    "after": 943058
+  },
+  {
+    "source": "assets/battle/anna-background.png",
+    "file": "assets/battle/anna-background.webp",
+    "before": 1763306,
+    "after": 201962
+  },
+  {
+    "source": "assets/battle/combat-atlas.png",
+    "file": "assets/battle/combat-atlas.webp",
+    "before": 2711745,
+    "after": 1968196
+  },
+  {
+    "source": "assets/battle/combat-kit-v2.png",
+    "file": "assets/battle/combat-kit-v2.webp",
+    "before": 2854723,
+    "after": 2069238
+  },
+  {
+    "source": "assets/battle/egor-background.png",
+    "file": "assets/battle/egor-background.webp",
+    "before": 2766274,
+    "after": 267876
+  },
+  {
+    "source": "assets/battle/heir-imgImage237.png",
+    "file": "assets/battle/heir-imgImage237.webp",
+    "before": 2929690,
+    "after": 405732
+  },
+  {
+    "source": "assets/battle/hud-kit-v2.png",
+    "file": "assets/battle/hud-kit-v2.webp",
+    "before": 1834874,
+    "after": 1189504
+  },
+  {
+    "source": "assets/battle/mia-imgImage237.png",
+    "file": "assets/battle/mia-imgImage237.webp",
+    "before": 2799876,
+    "after": 354974
+  },
+  {
+    "source": "assets/battle/princes-imgImage237.png",
+    "file": "assets/battle/princes-imgImage237.webp",
+    "before": 2757252,
+    "after": 329166
+  },
+  {
+    "source": "assets/figma/cards-anna-imgFrame.png",
+    "file": "assets/figma/cards-anna-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/cards-anna-imgImage74.png",
+    "file": "assets/figma/cards-anna-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/cards-egor-imgFrame.png",
+    "file": "assets/figma/cards-egor-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/cards-egor-imgImage74.png",
+    "file": "assets/figma/cards-egor-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/cards-egor-imgImage75.png",
+    "file": "assets/figma/cards-egor-imgImage75.webp",
+    "before": 2652492,
+    "after": 306664
+  },
+  {
+    "source": "assets/figma/cards-heir-imgFrame.png",
+    "file": "assets/figma/cards-heir-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/cards-heir-imgImage74.png",
+    "file": "assets/figma/cards-heir-imgImage74.webp",
+    "before": 2929690,
+    "after": 405732
+  },
+  {
+    "source": "assets/figma/cards-mia-imgFrame.png",
+    "file": "assets/figma/cards-mia-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/cards-mia-imgImage74.png",
+    "file": "assets/figma/cards-mia-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/cards-mia-imgImage75.png",
+    "file": "assets/figma/cards-mia-imgImage75.webp",
+    "before": 2652492,
+    "after": 306664
+  },
+  {
+    "source": "assets/figma/cards-mia-imgImage76.png",
+    "file": "assets/figma/cards-mia-imgImage76.webp",
+    "before": 2757252,
+    "after": 329166
+  },
+  {
+    "source": "assets/figma/cards-mia-imgImage77.png",
+    "file": "assets/figma/cards-mia-imgImage77.webp",
+    "before": 2799876,
+    "after": 354974
+  },
+  {
+    "source": "assets/figma/cards-princes-imgFrame.png",
+    "file": "assets/figma/cards-princes-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/cards-princes-imgImage74.png",
+    "file": "assets/figma/cards-princes-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/cards-princes-imgImage75.png",
+    "file": "assets/figma/cards-princes-imgImage75.webp",
+    "before": 2652492,
+    "after": 306664
+  },
+  {
+    "source": "assets/figma/cards-princes-imgImage76.png",
+    "file": "assets/figma/cards-princes-imgImage76.webp",
+    "before": 2757252,
+    "after": 329166
+  },
+  {
+    "source": "assets/figma/defeat-imgImage122.png",
+    "file": "assets/figma/defeat-imgImage122.webp",
+    "before": 962201,
+    "after": 598648
+  },
+  {
+    "source": "assets/figma/home-arrow.png",
+    "file": "assets/figma/home-arrow.webp",
+    "before": 368315,
+    "after": 232226
+  },
+  {
+    "source": "assets/figma/home-button.png",
+    "file": "assets/figma/home-button.webp",
+    "before": 150812,
+    "after": 99746
+  },
+  {
+    "source": "assets/figma/home-egor-base.png",
+    "file": "assets/figma/home-egor-base.webp",
+    "before": 1897993,
+    "after": 1301094
+  },
+  {
+    "source": "assets/figma/home-egor.png",
+    "file": "assets/figma/home-egor.webp",
+    "before": 2652492,
+    "after": 1779360
+  },
+  {
+    "source": "assets/figma/home-frame.png",
+    "file": "assets/figma/home-frame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/pause-bonfire.png",
+    "file": "assets/figma/pause-bonfire.webp",
+    "before": 1394850,
+    "after": 94050
+  },
+  {
+    "source": "assets/figma/pause-button.png",
+    "file": "assets/figma/pause-button.webp",
+    "before": 150812,
+    "after": 99746
+  },
+  {
+    "source": "assets/figma/settings-arrow.png",
+    "file": "assets/figma/settings-arrow.webp",
+    "before": 368315,
+    "after": 232226
+  },
+  {
+    "source": "assets/figma/settings-button.png",
+    "file": "assets/figma/settings-button.webp",
+    "before": 150812,
+    "after": 99746
+  },
+  {
+    "source": "assets/figma/settings-slider-knob.png",
+    "file": "assets/figma/settings-slider-knob.webp",
+    "before": 4041,
+    "after": 2352
+  },
+  {
+    "source": "assets/figma/settings-slider-left.png",
+    "file": "assets/figma/settings-slider-left.webp",
+    "before": 13566,
+    "after": 8410
+  },
+  {
+    "source": "assets/figma/settings-slider-middle.png",
+    "file": "assets/figma/settings-slider-middle.webp",
+    "before": 7640,
+    "after": 4988
+  },
+  {
+    "source": "assets/figma/settings-slider-right.png",
+    "file": "assets/figma/settings-slider-right.webp",
+    "before": 13381,
+    "after": 8200
+  },
+  {
+    "source": "assets/figma/settings-slider-thumb.png",
+    "file": "assets/figma/settings-slider-thumb.webp",
+    "before": 11397,
+    "after": 6910
+  },
+  {
+    "source": "assets/figma/start-anna-img23OrnateSlider1.png",
+    "file": "assets/figma/start-anna-img23OrnateSlider1.webp",
+    "before": 11397,
+    "after": 6910
+  },
+  {
+    "source": "assets/figma/start-anna-img23OrnateSlider5.png",
+    "file": "assets/figma/start-anna-img23OrnateSlider5.webp",
+    "before": 13381,
+    "after": 8200
+  },
+  {
+    "source": "assets/figma/start-anna-img23OrnateSlider6.png",
+    "file": "assets/figma/start-anna-img23OrnateSlider6.webp",
+    "before": 13566,
+    "after": 8410
+  },
+  {
+    "source": "assets/figma/start-anna-img23OrnateSlider7.png",
+    "file": "assets/figma/start-anna-img23OrnateSlider7.webp",
+    "before": 7640,
+    "after": 4988
+  },
+  {
+    "source": "assets/figma/start-anna-imgButton.png",
+    "file": "assets/figma/start-anna-imgButton.webp",
+    "before": 106057,
+    "after": 64984
+  },
+  {
+    "source": "assets/figma/start-anna-imgFrame.png",
+    "file": "assets/figma/start-anna-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/start-anna-imgImage56.png",
+    "file": "assets/figma/start-anna-imgImage56.webp",
+    "before": 225628,
+    "after": 120984
+  },
+  {
+    "source": "assets/figma/start-anna-imgImage74.png",
+    "file": "assets/figma/start-anna-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/start-egor-img23OrnateSlider1.png",
+    "file": "assets/figma/start-egor-img23OrnateSlider1.webp",
+    "before": 11397,
+    "after": 6910
+  },
+  {
+    "source": "assets/figma/start-egor-img23OrnateSlider5.png",
+    "file": "assets/figma/start-egor-img23OrnateSlider5.webp",
+    "before": 13381,
+    "after": 8200
+  },
+  {
+    "source": "assets/figma/start-egor-img23OrnateSlider6.png",
+    "file": "assets/figma/start-egor-img23OrnateSlider6.webp",
+    "before": 13566,
+    "after": 8410
+  },
+  {
+    "source": "assets/figma/start-egor-img23OrnateSlider7.png",
+    "file": "assets/figma/start-egor-img23OrnateSlider7.webp",
+    "before": 7640,
+    "after": 4988
+  },
+  {
+    "source": "assets/figma/start-egor-imgButton.png",
+    "file": "assets/figma/start-egor-imgButton.webp",
+    "before": 106057,
+    "after": 64984
+  },
+  {
+    "source": "assets/figma/start-egor-imgFrame.png",
+    "file": "assets/figma/start-egor-imgFrame.webp",
+    "before": 672744,
+    "after": 468182
+  },
+  {
+    "source": "assets/figma/start-egor-imgImage56.png",
+    "file": "assets/figma/start-egor-imgImage56.webp",
+    "before": 225628,
+    "after": 120984
+  },
+  {
+    "source": "assets/figma/start-egor-imgImage74.png",
+    "file": "assets/figma/start-egor-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/start-egor-imgImage75.png",
+    "file": "assets/figma/start-egor-imgImage75.webp",
+    "before": 2652492,
+    "after": 306664
+  },
+  {
+    "source": "assets/figma/victory-anna-imgFrame.png",
+    "file": "assets/figma/victory-anna-imgFrame.webp",
+    "before": 689873,
+    "after": 510580
+  },
+  {
+    "source": "assets/figma/victory-anna-imgImage74.png",
+    "file": "assets/figma/victory-anna-imgImage74.webp",
+    "before": 1897993,
+    "after": 209418
+  },
+  {
+    "source": "assets/figma/victory-egor-imgFrame.png",
+    "file": "assets/figma/victory-egor-imgFrame.webp",
+    "before": 689873,
+    "after": 510580
+  },
+  {
+    "source": "assets/figma/victory-egor-imgImage74.png",
+    "file": "assets/figma/victory-egor-imgImage74.webp",
+    "before": 1440961,
+    "after": 899498
+  },
+  {
+    "source": "assets/figma/victory-egor-imgImage75.png",
+    "file": "assets/figma/victory-egor-imgImage75.webp",
+    "before": 2652492,
+    "after": 306664
+  },
+  {
+    "source": "assets/prototype-preview.jpg",
+    "file": "assets/prototype-preview.webp",
+    "before": 52729,
+    "after": 228526
+  }
+]
