@@ -143,7 +143,7 @@ audioElement.addEventListener('error',()=>{
   if(state==='playing')pause();
   $('status').textContent='Не удалось воспроизвести трек. Закрой мини-приложение и открой его заново.';
 });
-function finish(mode){if(state!=='playing')return;state='ended';trackGoal('battle_finish',{result:mode,score,hits:hitCount,total_notes:notes.length,max_combo:maxCombo});stopSource();resetInputs();$('pause').disabled=true;$('countdown').textContent='';const recordKey=`${selectedBoss.id}.best`;if(score>Number(storage.get(recordKey,'0')))storage.set(recordKey,score);bestText();paintOutcome(outcome(mode,selectedBoss,{score,hits:hitCount,total:notes.length,combo:maxCombo}));root.dataset.screen='result';$('outcome').hidden=false;$('overlay').hidden=true;$('outcome').focus();tgCall('disableClosingConfirmation');backButton(false)}
+function finish(mode){if(state!=='playing')return;state='ended';trackGoal('battle_finish',{result:mode,score,hits:hitCount,total_notes:notes.length,accuracy_percent:notes.length?Math.floor(hitCount/notes.length*100):0,max_combo:maxCombo});stopSource();resetInputs();$('pause').disabled=true;$('countdown').textContent='';const recordKey=`${selectedBoss.id}.best`;if(score>Number(storage.get(recordKey,'0')))storage.set(recordKey,score);bestText();paintOutcome(outcome(mode,selectedBoss,{score,hits:hitCount,total:notes.length,combo:maxCombo}));root.dataset.screen='result';$('outcome').hidden=false;$('overlay').hidden=true;$('outcome').focus();tgCall('disableClosingConfirmation');backButton(false)}
 function pulseMetric(id){
  const el=$(id);el.getAnimations().forEach(a=>a.cancel());
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
